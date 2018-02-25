@@ -152,3 +152,4 @@ fabric.properties
 
 # Project setup
 logs/
+emnist/
