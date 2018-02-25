@@ -100,7 +100,7 @@ with tf.Graph().as_default():
                 y: mnist.validation.labels
             }
             accuracy = sess.run(eval_op, feed_dict=val_feed_dict)
-            print("Validation Error: ", (1 - accuracy))
+            print("Epoch: ", str(epoch) + "/" + str(training_epochs) + "  -  Validation Error: ", (1 - accuracy))
 
             summary_str = sess.run(summary_op, feed_dict=feed_dict)
             summary_writer.add_summary(summary_str, sess.run(global_step))
