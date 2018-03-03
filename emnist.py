@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt
 from scipy import io as spio
 import keras
 
-
 config = tf.ConfigProto()
-config.gpu_options.allocator_type = 'BFC'
+config.gpu_options.per_process_gpu_memory_fraction = 0.4
 
+# allocate only as much GPU memory based on runtime allocations
+config.gpu_options.allow_growth = True
 
 emnist = spio.loadmat("emnist/emnist-matlab/emnist-balanced.mat")
 
@@ -84,8 +85,8 @@ train_labels = train_labels.reshape(train_labels.shape[0])
 # Parameters
 learning_rate = 0.01
 momentum = 0.5
-training_epochs = 1
-batch_size = 20
+training_epochs = 300
+batch_size = 500
 display_step = 1
 
 
@@ -154,6 +155,8 @@ with tf.Graph().as_default():
     init_op = tf.global_variables_initializer()
     sess.run(init_op)
 
+    print("Total Training Samples:", x_train.shape[0])
+
     # Training Cycle
     for epoch in range(training_epochs):
         print("Epoch: " + str(epoch) + "/" + str(training_epochs))
@@ -184,13 +187,15 @@ with tf.Graph().as_default():
             if end_batch > total_batch:
                 end_batch = total_batch
 
+        print("Batch:", str(i) + "/" + str(total_batch) + " - Average Loss: " + str(avg_cost))
+
         # Display logs per epoch step
         if epoch % display_step == 0:
             validation_images = x_train[:5000]
             validation_labels = y_train[:5000]
             val_feed_dict = {
-                x: validation_images,
-                y: validation_labels
+                x: x_test,
+                y: y_test
             }
             accuracy = sess.run(eval_op, feed_dict=val_feed_dict)
             print("Epoch: ", str(epoch) + "/" + str(training_epochs) + "  -  Validation Error: ", (1 - accuracy))
@@ -203,8 +208,8 @@ with tf.Graph().as_default():
     train_images = x_train[5000:]
     train_labels = y_train[5000:]
     test_feed_dict = {
-        x: train_images,
-        y: train_labels
+        x: x_test,
+        y: y_test
     }
     accuracy = sess.run(eval_op, feed_dict=test_feed_dict)
     print("Test Accuracy: ", accuracy)
