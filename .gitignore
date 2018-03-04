@@ -153,3 +153,4 @@ fabric.properties
 # Project setup
 logs/
 emnist/
+tensorflow-site-examples/MNIST-data/

@@ -4,10 +4,10 @@ from tensorflow.contrib.learn.python.learn.datasets import mnist as input_data
 mnist = input_data.read_data_sets("MNIST_data", one_hot=True)
 
 # Parameters
-learning_rate = 0.01
-momentum = 0.5
-training_epochs = 100
-batch_size = 100
+# learning_rate = 0.01
+# momentum = 0.5
+training_epochs = 10
+batch_size = 256
 display_step = 1
 
 
@@ -20,15 +20,40 @@ def layer(input, weight_shape, bias_shape):
     return tf.nn.relu(tf.matmul(input, W) + b)
 
 
-def inference(x):
-    with tf.variable_scope("hidden_1"):
-        hidden_1 = layer(x, [784, 256], [256])
+def conv2d(input, weight_shape, bias_shape):
+    inn = weight_shape[0] * weight_shape[1] * weight_shape[2]
+    weight_init = tf.random_normal_initializer(stddev=(2.0/inn)**0.5)
 
-    with tf.variable_scope("hidden_2"):
-        hidden_2 = layer(hidden_1, [256, 256], [256])
+    W = tf.get_variable("W", weight_shape, initializer=weight_init)
+    bias_init = tf.constant_initializer(value=0)
+    b = tf.get_variable("b", bias_shape, initializer=bias_init)
+    conv_out = tf.nn.conv2d(input, W, strides=[1, 1, 1, 1], padding='SAME')
+    return tf.nn.relu(tf.nn.bias_add(conv_out, b))
+
+
+def max_pool(input, k=2):
+    return tf.nn.max_pool(input, ksize=[1, k, k, 1], strides=[1, k, k, 1], padding='SAME')
+
+
+def inference(x, keep_prob):
+    x = tf.reshape(x, shape=[-1, 28, 28, 1])
+    with tf.variable_scope("conv_1"):
+        conv_1 = conv2d(x, [5, 5, 1, 32], [32])
+        pool_1 = max_pool(conv_1)
+
+    with tf.variable_scope("conv_2"):
+        conv_2 = conv2d(pool_1, [5, 5, 32, 64], [64])
+        pool_2 = max_pool(conv_2)
+
+    with tf.variable_scope("fc"):
+        pool_2_flat = tf.reshape(pool_2, [-1, 7 * 7 * 64])
+        fc_1 = layer(pool_2_flat, [7*7*64, 1024], [1024])
+
+        # apply dropout
+        fc_1_drop = tf.nn.dropout(fc_1, keep_prob)
 
     with tf.variable_scope("output"):
-        output = layer(hidden_2, [256, 10], [10])
+        output = layer(fc_1_drop, [1024, 10], [10])
 
     return output
 
@@ -61,7 +86,7 @@ with tf.Graph().as_default():
     # 0-9 digits recognition => 10
     y = tf.placeholder("float", [None, 10])
 
-    output = inference(x)
+    output = inference(x, 0.4)
     cost = loss(output, y)
     global_step = tf.Variable(0, name='global_step', trainable=False)
 
@@ -101,7 +126,7 @@ with tf.Graph().as_default():
                 y: mnist.validation.labels
             }
             accuracy = sess.run(eval_op, feed_dict=val_feed_dict)
-            print("Epoch: ", str(epoch) + "/" + str(training_epochs) + "  -  Validation Error: ", (1 - accuracy))
+            print("Epoch: ", str(epoch+1) + "/" + str(training_epochs) + "  -  Validation Error: ", (1 - accuracy))
 
             summary_str = sess.run(summary_op, feed_dict=feed_dict)
             summary_writer.add_summary(summary_str, sess.run(global_step))
@@ -115,3 +140,4 @@ with tf.Graph().as_default():
     }
     accuracy = sess.run(eval_op, feed_dict=test_feed_dict)
     print("Test Accuracy: ", accuracy)
+
