@@ -83,10 +83,10 @@ train_labels = train_labels.reshape(train_labels.shape[0])
 #print(train_labels.shape)  # (112800,)
 
 # Parameters
-training_epochs = 150
-batch_size = 500
+training_epochs = 200
+batch_size = 2000
 display_step = 1
-training_samples = 80000
+training_samples = 112800
 test_samples = 18000  # max 18800 (18000 seems to work better for some reason?)
 
 # reduce the number of samples
@@ -225,7 +225,7 @@ with tf.Graph().as_default():
             accuracy = sess.run(eval_op, feed_dict=val_feed_dict)
             print("Epoch: ", str(epoch+1) + "/" + str(training_epochs) + "  -  Validation Error: ", (1 - accuracy))
 
-            summary_str = sess.run(summary_op, feed_dict=feed_dict)
+            summary_str = sess.run(summary_op, feed_dict=val_feed_dict)
             summary_writer.add_summary(summary_str, sess.run(global_step))
             saver.save(sess, "logs/model-checkpoint", global_step=global_step)
 
