@@ -103,12 +103,12 @@ def main(unused_argv):
   train_labels = np.asarray(mnist.train.labels, dtype=np.int32)
   eval_data = mnist.test.images # Returns np.array
   eval_labels = np.asarray(mnist.test.labels, dtype=np.int32)
-  #print(eval_labels[0])
-  #print(eval_data[0].shape)
-  #x = eval_data[0].reshape([28, 28])
-  #plt.gray()
-  #plt.imshow(x)
-  #plt.show()
+  print(eval_labels[0])
+  print(eval_data[0].shape)
+  x = eval_data[0].reshape([28, 28])
+  plt.gray()
+  plt.imshow(x)
+  plt.show()
  # # Create the Estimator
   mnist_classifier = tf.estimator.Estimator(
     model_fn=cnn_model_fn, model_dir="/tmp/mnist_convnet_model")

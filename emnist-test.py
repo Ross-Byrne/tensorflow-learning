@@ -57,20 +57,22 @@ y_test = tf.keras.utils.to_categorical(y_test, 47)
 #y_train = keras.utils.to_categorical(y_train, 47)
 #y_test = keras.utils.to_categorical(y_test, 47)
 
-#print(y_test.shape)  # (18800, 47)
-#print(y_train.shape)  # (112800, 47)
+print(y_test.shape)  # (18800, 47)
+print(y_train.shape)  # (112800, 47)
 
 # which sample to look at
-#samplenum = 5436
-
-#img = x_train[samplenum]
-
-# visualize image
-#im = plt.imshow(img[0])
-#plt.show()
-
-# show label for sample image
-#print(train_labels[samplenum][0])
+samplenum = 5437
+#
+img = x_train[samplenum]
+print(img.shape)
+# # visualize image
+x = img.reshape([28, 28])
+plt.gray()
+plt.imshow(x)
+plt.show()
+#
+# # show label for sample image
+# print(train_labels[samplenum][0])
 
 # Reshape labels (reduces dimensionality)
 #print(test_labels.shape)  # (18800, 47)
@@ -84,7 +86,7 @@ train_labels = train_labels.reshape(train_labels.shape[0])
 
 # Parameters
 training_epochs = 200
-batch_size = 2000
+batch_size = 1000
 display_step = 1
 training_samples = 112800
 test_samples = 18000  # max 18800 (18000 seems to work better for some reason?)
