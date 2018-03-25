@@ -61,7 +61,7 @@ print(y_test.shape)  # (18800, 47)
 print(y_train.shape)  # (112800, 47)
 
 # which sample to look at
-samplenum = 5437
+samplenum = 5438
 #
 img = x_train[samplenum]
 print(img.shape)
