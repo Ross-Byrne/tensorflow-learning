@@ -12,18 +12,18 @@ config.gpu_options.per_process_gpu_memory_fraction = 0.4
 # allocate only as much GPU memory based on runtime allocations
 config.gpu_options.allow_growth = True
 
-emnist = spio.loadmat("emnist/emnist-matlab/emnist-balanced.mat")
+emnist = spio.loadmat("emnist/matlab/emnist-balanced.mat")
 
 # load training dataset
 x_train = emnist["dataset"][0][0][0][0][0][0]
-x_train = x_train.astype(np.float32)
+x_train = x_train.astype('float32')
 
 # load training labels
 y_train = emnist["dataset"][0][0][0][0][0][1]
 
 # load test dataset
 x_test = emnist["dataset"][0][0][1][0][0][0]
-x_test = x_test.astype(np.float32)
+x_test = x_test.astype('float32')
 
 # load test labels
 y_test = emnist["dataset"][0][0][1][0][0][1]
@@ -61,12 +61,16 @@ print(y_test.shape)  # (18800, 47)
 print(y_train.shape)  # (112800, 47)
 
 # which sample to look at
-samplenum = 5438
+samplenum = 3434
 #
 img = x_train[samplenum]
 print(img.shape)
+print(train_labels[samplenum][0])
+
 # # visualize image
 x = img.reshape([28, 28])
+# flipped = np.fliplr(x)
+# x = np.rot90(flipped)
 plt.gray()
 plt.imshow(x)
 plt.show()
