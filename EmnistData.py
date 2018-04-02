@@ -43,6 +43,7 @@ def load_data(mat_file_path='emnist/matlab/emnist-balanced.mat', width=28, heigh
     # make sure bin directory exists
     bin_dir = os.path.dirname(os.path.realpath(__file__)) + '/bin'
     if not os.path.exists(bin_dir):
+        print('Creating bin/ directory...')
         os.makedirs(bin_dir)
 
     # Load convoluted list structure form loadmat
