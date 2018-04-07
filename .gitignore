@@ -154,5 +154,6 @@ fabric.properties
 logs/
 Graph/
 EMNIST/matlab/*.mat
+EMNIST/binary/*.gz
 MNIST_data/
 tensorflow-site-examples/MNIST-data/
