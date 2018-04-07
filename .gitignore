@@ -156,4 +156,4 @@ Graph/
 EMNIST/**/*.mat
 EMNIST/**/*.gz
 MNIST_data/
-tensorflow-site-examples/MNIST-data/
+tf-site-examples/MNIST-data/
