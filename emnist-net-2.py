@@ -30,23 +30,9 @@ def build_net(training_data, width=28, height=28, verbose=False):
 
     model = Sequential()
     model.add(Conv2D(32, kernel_size, padding='same', activation='relu', input_shape=input_shape))
-    model.add(Conv2D(32, kernel_size, activation='relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, kernel_size, padding='same', activation='relu'))
-    model.add(Conv2D(64, kernel_size, activation='relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.25))
+    # Insert new model here
 
-    model.add(Conv2D(64, kernel_size, padding='same', activation='relu'))
-    model.add(Conv2D(64, kernel_size, activation='relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.3))
-
-    model.add(Flatten())
-    model.add(Dense(512, activation='relu'))
-    model.add(Dropout(0.5))
     model.add(Dense(nb_classes, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy',
