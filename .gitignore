@@ -153,6 +153,6 @@ fabric.properties
 # Project setup
 logs/
 Graph/
-EMNIST/matlab/*
+EMNIST/matlab/*.mat
 MNIST_data/
 tensorflow-site-examples/MNIST-data/
