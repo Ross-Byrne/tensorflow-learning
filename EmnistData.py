@@ -16,7 +16,7 @@ import keras
 import numpy as np
 
 
-def load_data(mat_file_path='emnist/matlab/emnist-balanced.mat', width=28, height=28, max_=None, verbose=True):
+def load_data(mat_file_path='EMNIST/matlab/emnist-balanced.mat', width=28, height=28, max_=None, verbose=True):
     ''' Load data in from .mat file as specified by the paper.
 
         Arguments:

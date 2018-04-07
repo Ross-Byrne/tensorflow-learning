@@ -153,7 +153,7 @@ fabric.properties
 # Project setup
 logs/
 Graph/
-EMNIST/matlab/*.mat
-EMNIST/binary/*.gz
+EMNIST/**/*.mat
+EMNIST/**/*.gz
 MNIST_data/
 tensorflow-site-examples/MNIST-data/
