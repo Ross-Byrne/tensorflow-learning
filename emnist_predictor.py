@@ -39,7 +39,13 @@ def load_mapping(bin_dir='bin/'):
 
 # Takes the model, label mapping and directory of image to predict
 # Returns the prediction and confidence
-def predict(model, mapping, image_dir):
+def predict(image_dir):
+
+    # Load trained model and weights from file
+    model = load_model()
+
+    # load label mappings
+    mapping = load_mapping()
 
     # read parsed image back in 8-bit, black and white mode (L)
     x = imread(image_dir, mode='L')
@@ -70,15 +76,9 @@ def predict(model, mapping, image_dir):
 
 if __name__ == '__main__':
 
-    # Load trained model and weights from file
-    model = load_model()
-
-    # load label mappings
-    mapping = load_mapping()
-
     # get image to predict
-    image_dir = 'images/img_6.png'
+    image_dir = 'images/img_h_01.png'
 
     # Predict image, getting json as return type
-    prediction = predict(model, mapping, image_dir)
+    prediction = predict(image_dir)
     print(prediction)
