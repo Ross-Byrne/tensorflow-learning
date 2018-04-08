@@ -10,7 +10,7 @@ import pickle
 import argparse
 import keras
 import numpy as np
-import EmnistData as emnistData  # Load EMNIST Data
+from emnist import Emnist  # Load EMNIST Data
 
 print("Testing EMNIST Data import")
 batch_size = 100
@@ -98,6 +98,6 @@ def train(model, training_data, callback=True, batch_size=256, epochs=10):
 
 if __name__ == '__main__':
 
-    training_data = emnistData.load_data()
+    training_data = Emnist.load_data()
     model = build_net(training_data)
     train(model, training_data, epochs=epochs)

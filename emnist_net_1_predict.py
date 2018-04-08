@@ -2,8 +2,8 @@
 # https://github.com/Coopss/EMNIST/blob/master/server.py
 import os
 from scipy.misc import imsave, imread, imresize
-import numpy as np
 from keras.models import model_from_yaml
+import numpy as np
 import pickle
 
 # Mute tensorflow debugging information console
