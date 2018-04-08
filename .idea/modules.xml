@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/python-deeplearning.iml" filepath="$PROJECT_DIR$/.idea/python-deeplearning.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/tensorflow-book.iml" filepath="$PROJECT_DIR$/.idea/tensorflow-book.iml" />
     </modules>
   </component>
 </project>

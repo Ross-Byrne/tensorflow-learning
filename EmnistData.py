@@ -50,8 +50,8 @@ def load_data(mat_file_path='EMNIST/matlab/emnist-balanced.mat', width=28, heigh
     mat = loadmat(mat_file_path)
 
     # Load char mapping
-    mapping = {kv[0]:kv[1:][0] for kv in mat['dataset'][0][0][2]}
-    pickle.dump(mapping, open('bin/mapping.p', 'wb' ))
+    mapping = {kv[0]: kv[1:][0] for kv in mat['dataset'][0][0][2]}
+    pickle.dump(mapping, open('bin/mapping.p', 'wb'))
 
     # Load training data
     if max_ is None:
