@@ -157,3 +157,4 @@ EMNIST/**/*.mat
 EMNIST/**/*.gz
 MNIST_data/
 tf-site-examples/MNIST-data/
+machine_vision/**/images/*
