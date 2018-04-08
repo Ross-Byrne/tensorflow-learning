@@ -77,7 +77,7 @@ if __name__ == '__main__':
     mapping = load_mapping()
 
     # get image to predict
-    image_dir = 'images/img_h_01.png'
+    image_dir = 'images/img_6.png'
 
     # Predict image, getting json as return type
     prediction = predict(model, mapping, image_dir)
