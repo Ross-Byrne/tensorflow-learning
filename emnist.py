@@ -13,23 +13,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 class Emnist():
 
     def load_data(mat_file_path='EMNIST/matlab/emnist-balanced.mat', width=28, height=28, max_=None, verbose=True):
-        ''' Load data in from .mat file as specified by the paper.
 
-            Arguments:
-                mat_file_path: path to the .mat, should be in sample/
-
-            Optional Arguments:
-                width: specified width
-                height: specified height
-                max_: the max number of samples to load
-                verbose: enable verbose printing
-
-            Returns:
-                A tuple of training and test data, and the mapping for class code to ascii value,
-                in the following format:
-                    - ((training_images, training_labels), (testing_images, testing_labels), mapping)
-
-        '''
         # Local functions
         def rotate(img):
             # Used to rotate images (for some reason they are transposed on read-in)
