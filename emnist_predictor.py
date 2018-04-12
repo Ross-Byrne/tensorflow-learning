@@ -77,7 +77,7 @@ def predict(image_dir):
 if __name__ == '__main__':
 
     # get image to predict
-    image_dir = 'images/img_h_01.png'
+    image_dir = 'images/img_h_02.png'
 
     # Predict image, getting json as return type
     prediction = predict(image_dir)

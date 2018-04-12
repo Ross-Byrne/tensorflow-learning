@@ -36,7 +36,10 @@ def read_image(image_dir):
         if cv2.contourArea(cnt) > 50:
             [x, y, w, h] = cv2.boundingRect(cnt)
             if h > 10 & w < 25:
-                candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
+                # ccc = cv2.drawContours(im, [cnt], 0, (255, 0, 0), -1)
+                # cv2.imshow('norm', ccc)
+                # cv2.waitKey(0)
+                candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'cnt': cnt})
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -73,12 +76,16 @@ def read_image(image_dir):
         if c1 not in invalid:
             valid_chars.append(c1)
 
-    # order characters in correct order
-    # ????
+    # order characters in correct order, from left to right
+    valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
+
+    #print(valid_chars)
+    #print(sorted(valid_chars, key=lambda coords: coords['x']))
 
     # draw bounding boxes around valid characters
     i = 0
     image_dirs = []
+    imgs = []
     for con in valid_chars:
         x = con['x']
         y = con['y']
@@ -86,11 +93,39 @@ def read_image(image_dir):
         w = con['w']
 
         cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        roi = thresh[y: y + h, x: x + w]
+        img = thresh[y: y + h, x: x + w]
+        img = cv2.bitwise_not(img)  # invert to get white background and black text
+
+        # pad width or height to make image a square and add extra padding to help classification
+        height, width = img.shape[:2]
+        extra_pad = 6
+        half_pad = int(extra_pad / 2)
+
+        if width % 2 != 0:
+            width += 1
+
+        if height % 2 != 0:
+            height += 1
+
+        if width < height:
+            border_w = int((height - width + extra_pad) / 2)
+            border_h = half_pad
+        elif width > height:
+            border_h = int((width - height + extra_pad) / 2)
+            border_w = half_pad
+        else:
+            border_h = half_pad
+            border_w = half_pad
+
+        img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
+                                 borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
+
         file_path = temp_dir + 'img_' + str(i) + '.png'
-        cv2.imwrite(file_path, roi)  # save contents of rectangle to image folder
+        cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
         image_dirs.append(file_path)
-        cv2.imshow('norm', im)
+        imgs.append(img)
+        #cv2.imshow('norm', img)
+        #cv2.waitKey(0)
         i += 1
 
     return temp_dir, image_dirs
@@ -101,3 +136,4 @@ if __name__ == '__main__':
     image_dir = 'images/scene_text_detection/bench_01.png'
     dirs = read_image(image_dir)
     print(dirs)
+
