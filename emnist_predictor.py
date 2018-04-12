@@ -39,7 +39,7 @@ def load_mapping(bin_dir='bin/'):
 
 # Takes the model, label mapping and directory of image to predict
 # Returns the prediction and confidence
-def predict(image_dir):
+def predict(image):
 
     # Load trained model and weights from file
     model = load_model()
@@ -48,7 +48,8 @@ def predict(image_dir):
     mapping = load_mapping()
 
     # read parsed image back in 8-bit, black and white mode (L)
-    x = imread(image_dir, mode='L')
+    #x = imread(image_dir, mode='L')
+    x = image
     x = np.invert(x)
 
     # Visualize new array

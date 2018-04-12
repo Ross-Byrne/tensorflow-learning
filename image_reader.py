@@ -1,6 +1,7 @@
 import os
 import shutil
 import cv2
+from statistics import median
 
 # directory for temp images
 temp_dir = 'temp_images/'
@@ -36,10 +37,7 @@ def read_image(image_dir):
         if cv2.contourArea(cnt) > 50:
             [x, y, w, h] = cv2.boundingRect(cnt)
             if h > 10 & w < 25:
-                # ccc = cv2.drawContours(im, [cnt], 0, (255, 0, 0), -1)
-                # cv2.imshow('norm', ccc)
-                # cv2.waitKey(0)
-                candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'cnt': cnt})
+                candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -79,12 +77,20 @@ def read_image(image_dir):
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
 
-    #print(valid_chars)
-    #print(sorted(valid_chars, key=lambda coords: coords['x']))
+    # calculate median distance between charaters to guess where spaces are
+    spaces = []
+    valid_chars[0]['distance_from_last'] = 0;
+    for x in range(1, len(valid_chars)):
+        distance = valid_chars[x]['x'] - (valid_chars[x - 1]['x'] + valid_chars[x - 1]['w'])
+        spaces.append(distance)
+        valid_chars[x]['distance_from_last'] = distance
+
+    median_space = median(spaces)
+    min_space_size = median_space + (median_space * 2)  # guess what the smallest space width is
 
     # draw bounding boxes around valid characters
     i = 0
-    image_dirs = []
+    #image_dirs = []
     imgs = []
     for con in valid_chars:
         x = con['x']
@@ -120,18 +126,25 @@ def read_image(image_dir):
         img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
                                  borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
 
-        file_path = temp_dir + 'img_' + str(i) + '.png'
-        cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
-        image_dirs.append(file_path)
+       # file_path = temp_dir + 'img_' + str(i) + '.png'
+        #cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
+
+        # Add None to indicate a space
+        if con['distance_from_last'] > min_space_size:
+           # image_dirs.append(None)
+            imgs.append(None)
+
+        #image_dirs.append(file_path)
         imgs.append(img)
+
         #cv2.imshow('norm', img)
         #cv2.waitKey(0)
         i += 1
 
-    #cv2.imshow('norm', im)
-    #cv2.waitKey(0)
+    cv2.imshow('norm', im)
+    cv2.waitKey(0)
 
-    return temp_dir, image_dirs
+    return imgs
 
 
 if __name__ == '__main__':
