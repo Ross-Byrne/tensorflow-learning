@@ -128,6 +128,9 @@ def read_image(image_dir):
         #cv2.waitKey(0)
         i += 1
 
+    #cv2.imshow('norm', im)
+    #cv2.waitKey(0)
+
     return temp_dir, image_dirs
 
 
