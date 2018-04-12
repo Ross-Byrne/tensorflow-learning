@@ -136,7 +136,7 @@ def read_image(image_dir):
 
 if __name__ == '__main__':
 
-    image_dir = 'images/scene_text_detection/bench_01.png'
+    image_dir = 'images/bench_01.png'
     dirs = read_image(image_dir)
     print(dirs)
 

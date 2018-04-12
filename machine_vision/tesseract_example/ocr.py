@@ -7,18 +7,18 @@ import os
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", default='../../images/ocr/example_03.png',
+ap.add_argument("-i", "--image", default='../../images/bench_04.png',
                 help="path to input image to be OCR'd")
 ap.add_argument("-p", "--preprocess", type=str, default="thresh",
                 help="type of preprocessing to be done")
 args = vars(ap.parse_args())
 
 # load the example image and convert it to grayscale
-image = cv2.imread(args["image"])
+image = cv2.imread(args['image'])
 
 # resize image
-image = cv2.resize(image, (500, 500))
-# image = cv2.resize(image, (0, 0), fx=0.2, fy=0.2)
+#image = cv2.resize(image, (500, 500))
+#image = cv2.resize(image, (0, 0), fx=0.2, fy=0.2)
 
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
