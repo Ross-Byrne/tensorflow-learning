@@ -7,7 +7,7 @@ import os
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--image", default='../../images/bench_04.png',
+ap.add_argument("-i", "--image", default='../../images/bench_11.png',
                 help="path to input image to be OCR'd")
 ap.add_argument("-p", "--preprocess", type=str, default="thresh",
                 help="type of preprocessing to be done")

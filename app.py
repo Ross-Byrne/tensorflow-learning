@@ -5,7 +5,7 @@ import shutil
 if __name__ == '__main__':
 
     # get image to read text from
-    image_dir = 'images/bench_04.png'
+    image_dir = 'images/bench_11.png'
 
     # read characters from image
     characters = image_reader.read_image(image_dir)

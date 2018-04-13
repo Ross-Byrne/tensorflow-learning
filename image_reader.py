@@ -34,7 +34,7 @@ def read_image(image_dir):
 
     # save list of all contours values
     for cnt in contours:
-        if cv2.contourArea(cnt) > 50:
+        if cv2.contourArea(cnt) > 45:
             [x, y, w, h] = cv2.boundingRect(cnt)
             if h > 10 & w < 25:
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
@@ -86,7 +86,7 @@ def read_image(image_dir):
         valid_chars[x]['distance_from_last'] = distance
 
     median_space = median(spaces)
-    min_space_size = median_space + (median_space * 2)  # guess what the smallest space width is
+    min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
 
     # draw bounding boxes around valid characters
     i = 0
