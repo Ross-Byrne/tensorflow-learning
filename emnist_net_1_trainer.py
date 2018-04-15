@@ -13,8 +13,8 @@ import numpy as np
 from emnist import Emnist  # Load EMNIST Data
 
 print("Testing EMNIST Data import")
-batch_size = 100
-epochs = 1
+batch_size = 256
+epochs = 10
 
 
 def build_net(training_data, width=28, height=28, verbose=False):
@@ -29,18 +29,21 @@ def build_net(training_data, width=28, height=28, verbose=False):
     kernel_size = (3, 3)  # convolution kernel size
 
     model = Sequential()
-    model.add(Conv2D(32, kernel_size, padding='same', activation='relu', input_shape=input_shape))
-    model.add(Conv2D(32, kernel_size, activation='relu'))
-    model.add(MaxPooling2D(pool_size=pool_size))
-    model.add(Dropout(0.25))
-
+    model.add(Conv2D(64, kernel_size, padding='same', activation='relu', input_shape=input_shape))
     model.add(Conv2D(64, kernel_size, padding='same', activation='relu'))
     model.add(Conv2D(64, kernel_size, activation='relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.25))
 
-    model.add(Conv2D(64, kernel_size, padding='same', activation='relu'))
-    model.add(Conv2D(64, kernel_size, activation='relu'))
+    model.add(Conv2D(128, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(128, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(128, kernel_size, activation='relu'))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.25))
+
+    model.add(Conv2D(256, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(256, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(256, kernel_size, activation='relu'))
     model.add(MaxPooling2D(pool_size=pool_size))
     model.add(Dropout(0.3))
 
@@ -100,4 +103,4 @@ if __name__ == '__main__':
 
     training_data = Emnist.load_data()
     model = build_net(training_data)
-    train(model, training_data, epochs=epochs)
+    train(model, training_data, batch_size=batch_size, epochs=epochs)

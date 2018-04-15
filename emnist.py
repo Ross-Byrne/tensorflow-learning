@@ -12,7 +12,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 class Emnist():
 
-    def load_data(mat_file_path='EMNIST/matlab/emnist-balanced.mat', width=28, height=28, max_=None, verbose=True):
+    def load_data(mat_file_path='EMNIST/matlab/emnist-byclass.mat', width=28, height=28, max_=None, verbose=True):
 
         # Local functions
         def rotate(img):

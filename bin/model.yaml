@@ -14,7 +14,7 @@ config:
     data_format: channels_last
     dilation_rate: &id001 !!python/tuple [1, 1]
     dtype: float32
-    filters: 32
+    filters: 64
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
@@ -37,7 +37,7 @@ config:
     bias_regularizer: null
     data_format: channels_last
     dilation_rate: *id001
-    filters: 32
+    filters: 64
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
@@ -45,6 +45,29 @@ config:
     kernel_regularizer: null
     kernel_size: *id002
     name: conv2d_2
+    padding: same
+    strides: *id003
+    trainable: true
+    use_bias: true
+- class_name: Conv2D
+  config:
+    activation: relu
+    activity_regularizer: null
+    bias_constraint: null
+    bias_initializer:
+      class_name: Zeros
+      config: {}
+    bias_regularizer: null
+    data_format: channels_last
+    dilation_rate: *id001
+    filters: 64
+    kernel_constraint: null
+    kernel_initializer:
+      class_name: VarianceScaling
+      config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+    kernel_regularizer: null
+    kernel_size: *id002
+    name: conv2d_3
     padding: valid
     strides: *id003
     trainable: true
@@ -70,14 +93,14 @@ config:
     bias_regularizer: null
     data_format: channels_last
     dilation_rate: *id001
-    filters: 64
+    filters: 128
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
     kernel_size: *id002
-    name: conv2d_3
+    name: conv2d_4
     padding: same
     strides: *id003
     trainable: true
@@ -93,14 +116,37 @@ config:
     bias_regularizer: null
     data_format: channels_last
     dilation_rate: *id001
-    filters: 64
+    filters: 128
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
     kernel_size: *id002
-    name: conv2d_4
+    name: conv2d_5
+    padding: same
+    strides: *id003
+    trainable: true
+    use_bias: true
+- class_name: Conv2D
+  config:
+    activation: relu
+    activity_regularizer: null
+    bias_constraint: null
+    bias_initializer:
+      class_name: Zeros
+      config: {}
+    bias_regularizer: null
+    data_format: channels_last
+    dilation_rate: *id001
+    filters: 128
+    kernel_constraint: null
+    kernel_initializer:
+      class_name: VarianceScaling
+      config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+    kernel_regularizer: null
+    kernel_size: *id002
+    name: conv2d_6
     padding: valid
     strides: *id003
     trainable: true
@@ -126,14 +172,14 @@ config:
     bias_regularizer: null
     data_format: channels_last
     dilation_rate: *id001
-    filters: 64
+    filters: 256
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
     kernel_size: *id002
-    name: conv2d_5
+    name: conv2d_7
     padding: same
     strides: *id003
     trainable: true
@@ -149,14 +195,37 @@ config:
     bias_regularizer: null
     data_format: channels_last
     dilation_rate: *id001
-    filters: 64
+    filters: 256
     kernel_constraint: null
     kernel_initializer:
       class_name: VarianceScaling
       config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
     kernel_regularizer: null
     kernel_size: *id002
-    name: conv2d_6
+    name: conv2d_8
+    padding: same
+    strides: *id003
+    trainable: true
+    use_bias: true
+- class_name: Conv2D
+  config:
+    activation: relu
+    activity_regularizer: null
+    bias_constraint: null
+    bias_initializer:
+      class_name: Zeros
+      config: {}
+    bias_regularizer: null
+    data_format: channels_last
+    dilation_rate: *id001
+    filters: 256
+    kernel_constraint: null
+    kernel_initializer:
+      class_name: VarianceScaling
+      config: {distribution: uniform, mode: fan_avg, scale: 1.0, seed: null}
+    kernel_regularizer: null
+    kernel_size: *id002
+    name: conv2d_9
     padding: valid
     strides: *id003
     trainable: true
@@ -209,6 +278,6 @@ config:
     kernel_regularizer: null
     name: dense_2
     trainable: true
-    units: 47
+    units: 62
     use_bias: true
 keras_version: 2.1.5
