@@ -21,11 +21,14 @@ def read_image(im):
         os.makedirs(dir)  # make directory again
 
     #im = cv2.imread(image_dir)
-    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    #blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    #thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
-    thresh = im
+    cv2.imshow('norm', thresh)
+    cv2.waitKey(0)
+
+    #thresh = im
 
     # Should try this
     #ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
@@ -142,6 +145,7 @@ def read_image(im):
         #image_dirs.append(file_path)
         imgs.append(img)
 
+
         #cv2.imshow('norm', img)
         #cv2.waitKey(0)
         i += 1
@@ -156,6 +160,6 @@ if __name__ == '__main__':
 
     image_dir = 'images/bench_01.png'
     im = cv2.imread(image_dir)
-    dirs = read_image(im)
-    print(dirs)
+    imgs = read_image(im)
+   # print(imgs)
 

@@ -19,6 +19,8 @@ if __name__ == '__main__':
 
     # read characters from image
     characters = image_reader.read_image(node_images[4])
+    cv2.imshow("Image", characters[0])
+    cv2.waitKey(0)
 
     if len(characters) > 0:
         print('Classifying text...')

@@ -102,13 +102,13 @@ def process_graph(image_dir):
         # cv2.imshow("Image", masked_image)
         # cv2.waitKey(0)
         x, y, w, h = cv2.boundingRect(g_node['hull'])
-        node_image = image[y: y + h, x: x + w]
+        node_image = img[y: y + h, x: x + w]
         node_images.append(node_image)
         #cv2.imshow("Image", node_image)
        # cv2.waitKey(0)
 
-    #cv2.imshow("Image", image)
-    #cv2.waitKey(0)
+    cv2.imshow("Image", image)
+    cv2.waitKey(0)
     return node_images
 
 
