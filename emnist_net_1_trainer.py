@@ -14,7 +14,7 @@ from emnist import Emnist  # Load EMNIST Data
 
 print("Testing EMNIST Data import")
 batch_size = 256
-epochs = 10
+epochs = 1
 
 
 def build_net(training_data, width=28, height=28, verbose=False):

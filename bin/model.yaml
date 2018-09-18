@@ -241,7 +241,7 @@ config:
 - class_name: Dropout
   config: {name: dropout_3, noise_shape: null, rate: 0.3, seed: null, trainable: true}
 - class_name: Flatten
-  config: {name: flatten_1, trainable: true}
+  config: {data_format: channels_last, name: flatten_1, trainable: true}
 - class_name: Dense
   config:
     activation: relu
@@ -280,4 +280,4 @@ config:
     trainable: true
     units: 62
     use_bias: true
-keras_version: 2.1.5
+keras_version: 2.1.6

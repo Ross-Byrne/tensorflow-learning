@@ -1,7 +1,7 @@
 import os
 import shutil
 import cv2
-from statistics import median
+import numpy as np
 
 # directory for temp images
 temp_dir = 'temp_images/'
@@ -9,7 +9,7 @@ temp_dir = 'temp_images/'
 
 # Takes path to image and reads characters in it
 # Returns array of image paths, one for each character
-def read_image(image_dir):
+def read_image(im):
 
     # create directory for temp images
     dir = os.path.dirname(os.path.realpath(__file__)) + '/' + temp_dir
@@ -20,10 +20,15 @@ def read_image(image_dir):
         shutil.rmtree(dir)  # Clean up
         os.makedirs(dir)  # make directory again
 
-    im = cv2.imread(image_dir)
-    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+    #im = cv2.imread(image_dir)
+    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #blur = cv2.GaussianBlur(gray, (5, 5), 0)
+    #thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+
+    thresh = im
+
+    # Should try this
+    #ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     # Now finding Contours
     image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -77,15 +82,15 @@ def read_image(image_dir):
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
 
-    # calculate median distance between charaters to guess where spaces are
+    # calculate median distance between characters to guess where spaces are
     spaces = []
-    valid_chars[0]['distance_from_last'] = 0;
+    valid_chars[0]['distance_from_last'] = 0
     for x in range(1, len(valid_chars)):
         distance = valid_chars[x]['x'] - (valid_chars[x - 1]['x'] + valid_chars[x - 1]['w'])
         spaces.append(distance)
         valid_chars[x]['distance_from_last'] = distance
 
-    median_space = median(spaces)
+    median_space = np.median(spaces)
     min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
 
     # draw bounding boxes around valid characters
@@ -150,6 +155,7 @@ def read_image(image_dir):
 if __name__ == '__main__':
 
     image_dir = 'images/bench_01.png'
-    dirs = read_image(image_dir)
+    im = cv2.imread(image_dir)
+    dirs = read_image(im)
     print(dirs)
 
