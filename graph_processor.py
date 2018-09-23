@@ -80,6 +80,7 @@ def process_graph(image_dir):
             perimeter = cv2.arcLength(hull, True)
             circularity = (perimeter * perimeter) / (4 * np.pi * area)
 
+
             if circularity <= 1.7:
                 # graph_nodes.append({'item': c1, 'hull': hull})
                 graph_nodes.append(c1)
@@ -88,14 +89,15 @@ def process_graph(image_dir):
                 # list as connection, not node
                 # graph_links.append({'item': c1, 'hull': hull})
                 graph_links.append(c1)
+                #cv2.drawContours(image, [hull], 0, (155, 155, 155), 2, 8)
 
                # rows, cols = image.shape[:2]
                # [vx, vy, x, y] = cv2.fitLine(c1['contour'], cv2.DIST_L2, 0, 0.01, 0.01)
                # lefty = int((-x * vy / vx) + y)
                # righty = int(((cols - x) * vy / vx) + y)
                # cv2.line(image, (cols - 1, righty), (0, lefty), (100, 100, 100), 2)
-               # cv2.imshow("Image", image)
-               # cv2.waitKey(0)
+                #cv2.imshow("Image", image)
+                #cv2.waitKey(0)
 
     nodes_info = []
 
@@ -117,7 +119,7 @@ if __name__ == '__main__':
     # img_dir = 'images/graphs/graph_test.png'
     # img_dir = 'images/graphs/graph_test_2.png'
     # img_dir = 'images/graphs/graph_test_3.png'
-    img_dir = 'images/graphs/name-graph.jpg'
+    img_dir = 'images/graphs/name-graph.png'
 
     nodes, links = process_graph(img_dir)
     print('nodes:', str(len(nodes)), ' links:', str(len(links)))

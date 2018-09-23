@@ -180,7 +180,7 @@ def read_image(image_dir, graph_node):
 
 
 if __name__ == '__main__':
-    img_dir = 'images/graphs/name-graph.jpg'
+    img_dir = 'images/graphs/name-graph.png'
 
     nodes, links = graph_processor.process_graph(img_dir)
     print('nodes:', str(len(nodes)), ' links:', str(len(links)))

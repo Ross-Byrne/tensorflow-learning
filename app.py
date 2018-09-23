@@ -10,7 +10,7 @@ if __name__ == '__main__':
     # get image to read text from
     #image_dir = 'images/bench_11.png'
 
-    graph_image_dir = 'images/graphs/name-graph.jpg'
+    graph_image_dir = 'images/graphs/name-graph.png'
     #graph_image_dir = 'images/bench_04.png'
 
     nodes, links = graph_processor.process_graph(graph_image_dir)
