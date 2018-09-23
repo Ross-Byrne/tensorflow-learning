@@ -12,15 +12,12 @@ if __name__ == '__main__':
 
     graph_image_dir = 'images/graphs/graph_test_3.png'
 
-    node_images = graph_processor.process_graph(graph_image_dir)
-    cv2.imshow("Image", node_images[4])
-    cv2.waitKey(0)
+    nodes, links = graph_processor.process_graph(graph_image_dir)
 
+    #for node in nodes:
 
     # read characters from image
-    characters = image_reader.read_image(node_images[4])
-    cv2.imshow("Image", characters[0])
-    cv2.waitKey(0)
+    characters = image_reader.read_image(graph_image_dir, nodes[4])
 
     if len(characters) > 0:
         print('Classifying text...')
@@ -30,6 +27,8 @@ if __name__ == '__main__':
         for char in characters:
 
             if char is not None:
+                cv2.imshow("Image", char)
+                cv2.waitKey(0)
                 # Predict image, getting json as return type
                 prediction = emnist_predictor.predict(char)
                 text += prediction['prediction']

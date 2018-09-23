@@ -2,6 +2,7 @@ import os
 import shutil
 import cv2
 import numpy as np
+import graph_processor
 
 # directory for temp images
 temp_dir = 'temp_images/'
@@ -9,7 +10,7 @@ temp_dir = 'temp_images/'
 
 # Takes path to image and reads characters in it
 # Returns array of image paths, one for each character
-def read_image(im):
+def read_image(image_dir, graph_node):
 
     # create directory for temp images
     dir = os.path.dirname(os.path.realpath(__file__)) + '/' + temp_dir
@@ -20,7 +21,7 @@ def read_image(im):
         shutil.rmtree(dir)  # Clean up
         os.makedirs(dir)  # make directory again
 
-    #im = cv2.imread(image_dir)
+    im = cv2.imread(image_dir)
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
@@ -34,18 +35,23 @@ def read_image(im):
     #ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
 
     # Now finding Contours
-    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+   # image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     candidates = []
     invalid = []
     valid_chars = []
+    node = graph_node['node']
+    nested_contours = graph_node['nested_contours']
+    parent_area = cv2.contourArea(node['contour'])
+    print("Parent:", str(parent_area))
 
-    # save list of all contours values
-    for cnt in contours:
-        if cv2.contourArea(cnt) > 45:
-            [x, y, w, h] = cv2.boundingRect(cnt)
-            if h > 10 & w < 25:
-                candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
+    for con in nested_contours:
+        child_area = cv2.contourArea(con['contour'])
+        print("Child:", str(child_area))
+
+        # keep contour if area is at least 20% smaller then parent area
+        if child_area < (parent_area * 0.8):
+            candidates.append(con)
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -84,6 +90,8 @@ def read_image(im):
 
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
+
+    print("Valid:", len(valid_chars))
 
     # calculate median distance between characters to guess where spaces are
     spaces = []
@@ -134,7 +142,7 @@ def read_image(im):
         img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
                                  borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
 
-       # file_path = temp_dir + 'img_' + str(i) + '.png'
+        #file_path = temp_dir + 'img_' + str(i) + '.png'
         #cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
 
         # Add None to indicate a space
@@ -157,9 +165,14 @@ def read_image(im):
 
 
 if __name__ == '__main__':
+    img_dir = 'images/graphs/graph_test_3.png'
 
-    image_dir = 'images/bench_01.png'
-    im = cv2.imread(image_dir)
-    imgs = read_image(im)
+    nodes, links = graph_processor.process_graph(img_dir)
+    print('nodes:', str(len(nodes)), ' links:', str(len(links)))
+
+    characters = read_image(img_dir, nodes[4])
+    print("Characters:", str(len(characters)))
+    #image_dir = 'images/bench_01.png'
+    #im = cv2.imread(image_dir)
+    #imgs = read_image(im)
    # print(imgs)
-

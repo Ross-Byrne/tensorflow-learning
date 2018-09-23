@@ -21,10 +21,11 @@ def process_graph(image_dir):
     candidates = []
     invalid = []
     valid_cons = []
+    parent_child_list = []
 
     # save list of all contours values
     for cnt in contours:
-        if cv2.contourArea(cnt) > 45:
+        if cv2.contourArea(cnt) > 25:
             [x, y, w, h] = cv2.boundingRect(cnt)
             if h > 10 & w < 25:
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'contour': cnt})
@@ -33,6 +34,7 @@ def process_graph(image_dir):
     # get list of contours found inside other contours
     # these are invalid and cannot be used
     for a in candidates:
+        parent_child_hash = {'parent': a, 'children': []}
 
         x1 = a['x']
         y1 = a['y']
@@ -59,8 +61,11 @@ def process_graph(image_dir):
                 # if contour B is inside A, save it
                 if is_width and is_height:
                     invalid.append(b)
+                    parent_child_hash['children'].append(b)
 
-    graph_connections = []
+        parent_child_list.append(parent_child_hash)
+
+    graph_links = []
     graph_nodes = []
     # save contours that are valid
     for c1 in candidates:
@@ -74,11 +79,13 @@ def process_graph(image_dir):
             #print(circularity)
 
             if circularity <= 1.7:
-                graph_nodes.append({'contour': c1, 'hull': hull})
+                # graph_nodes.append({'item': c1, 'hull': hull})
+                graph_nodes.append(c1)
 
             else:
                 # list as connection, not node
-                graph_connections.append({'contour': c1, 'hull': hull})
+                # graph_links.append({'item': c1, 'hull': hull})
+                graph_links.append(c1)
 
                # rows, cols = image.shape[:2]
                # [vx, vy, x, y] = cv2.fitLine(c1['contour'], cv2.DIST_L2, 0, 0.01, 0.01)
@@ -88,28 +95,18 @@ def process_graph(image_dir):
                # cv2.imshow("Image", image)
                # cv2.waitKey(0)
 
-    node_images = []
-    for g_node in graph_nodes:
-        # create mask to hide all other contours
-        mask = np.ones(image.shape[:2], dtype="uint8") * 255
+    nodes_info = []
 
-        for c in valid_cons:
-            if c is not g_node:
-                cv2.drawContours(mask, [c['contour']], -1, 0, -1)
+    for node in graph_nodes:
+        for parent_child_hash in parent_child_list:
 
-        # remove the contours from the image and show the resulting images
-        # masked_image = cv2.bitwise_and(image, image, mask=mask)
-        # cv2.imshow("Image", masked_image)
-        # cv2.waitKey(0)
-        x, y, w, h = cv2.boundingRect(g_node['hull'])
-        node_image = img[y: y + h, x: x + w]
-        node_images.append(node_image)
-        #cv2.imshow("Image", node_image)
-       # cv2.waitKey(0)
+            if parent_child_hash['parent'] is node:
+                nodes_info.append({'node': node, 'nested_contours': parent_child_hash['children']})
 
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
-    return node_images
+    # cv2.imshow("Image", image)
+    # cv2.waitKey(0)
+
+    return nodes_info, graph_links
 
 
 if __name__ == '__main__':
@@ -118,5 +115,5 @@ if __name__ == '__main__':
     # img_dir = 'images/graphs/graph_test_2.png'
     img_dir = 'images/graphs/graph_test_3.png'
 
-    imgs = process_graph(img_dir)
-    print(imgs)
+    nodes, links = process_graph(img_dir)
+    print('nodes:', str(len(nodes)), ' links:', str(len(links)))
