@@ -5,6 +5,10 @@ import numpy as np
 def process_graph(image_dir):
 
     img = cv2.imread(image_dir)
+
+    dim = (1000, 500)
+    img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+
     #cv2.imshow("Image", img)
     #cv2.waitKey(0)
 
@@ -15,8 +19,8 @@ def process_graph(image_dir):
     # Finding Contours
     image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
-    #cv2.imshow("Image", image)
-    #cv2.waitKey(0)
+    cv2.imshow("Image", image)
+    cv2.waitKey(0)
 
     candidates = []
     invalid = []
@@ -103,6 +107,7 @@ def process_graph(image_dir):
 
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
+    print('nodes:', str(len(nodes_info)), ' links:', str(len(graph_links)))
 
     return nodes_info, graph_links
 
@@ -111,7 +116,8 @@ if __name__ == '__main__':
     # img_dir = "images/graphs/circle_test.png"
     # img_dir = 'images/graphs/graph_test.png'
     # img_dir = 'images/graphs/graph_test_2.png'
-    img_dir = 'images/graphs/graph_test_3.png'
+    # img_dir = 'images/graphs/graph_test_3.png'
+    img_dir = 'images/graphs/name-graph.jpg'
 
     nodes, links = process_graph(img_dir)
     print('nodes:', str(len(nodes)), ' links:', str(len(links)))

@@ -22,6 +22,10 @@ def read_image(image_dir, graph_node):
         os.makedirs(dir)  # make directory again
 
     im = cv2.imread(image_dir)
+
+    dim = (1000, 500)
+    im = cv2.resize(im, dim, interpolation=cv2.INTER_AREA)
+
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
@@ -48,11 +52,9 @@ def read_image(image_dir, graph_node):
         node = graph_node['node']
         nested_contours = graph_node['nested_contours']
         parent_area = cv2.contourArea(node['contour'])
-        print("Parent:", str(parent_area))
 
         for con in nested_contours:
             child_area = cv2.contourArea(con['contour'])
-            print("Child:", str(child_area))
 
             # keep contour if area is at least 20% smaller then parent area
             if child_area < (parent_area * 0.8):
@@ -103,7 +105,7 @@ def read_image(image_dir, graph_node):
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
     imgs = []
-    print("Valid:", len(valid_chars))
+    #print("Valid:", len(valid_chars))
 
     if len(valid_chars) > 0:
 
@@ -178,14 +180,10 @@ def read_image(image_dir, graph_node):
 
 
 if __name__ == '__main__':
-    img_dir = 'images/graphs/graph_test_3.png'
+    img_dir = 'images/graphs/name-graph.jpg'
 
     nodes, links = graph_processor.process_graph(img_dir)
     print('nodes:', str(len(nodes)), ' links:', str(len(links)))
 
     characters = read_image(img_dir, nodes[4])
     print("Characters:", str(len(characters)))
-    #image_dir = 'images/bench_01.png'
-    #im = cv2.imread(image_dir)
-    #imgs = read_image(im)
-   # print(imgs)
