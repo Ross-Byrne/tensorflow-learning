@@ -2,6 +2,17 @@ import cv2
 import numpy as np
 
 
+def calc_distance(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+
+    dx = x1 - x2
+    dy = y1 - y2
+    d = np.sqrt(dx * dx + dy * dy)
+
+    return d
+
+
 def process_graph(image_dir):
 
     img = cv2.imread(image_dir)
@@ -70,6 +81,7 @@ def process_graph(image_dir):
 
     graph_links = []
     graph_nodes = []
+    n_index = 0
     # save contours that are valid
     for c1 in candidates:
         if c1 not in invalid:
@@ -80,27 +92,66 @@ def process_graph(image_dir):
             perimeter = cv2.arcLength(hull, True)
             circularity = (perimeter * perimeter) / (4 * np.pi * area)
 
-
             if circularity <= 1.7:
-                # graph_nodes.append({'item': c1, 'hull': hull})
+                c1['index'] = n_index
                 graph_nodes.append(c1)
+                n_index = n_index + 1
 
             else:
                 # list as connection, not node
-                # graph_links.append({'item': c1, 'hull': hull})
                 graph_links.append(c1)
-                #cv2.drawContours(image, [hull], 0, (155, 155, 155), 2, 8)
 
-               # rows, cols = image.shape[:2]
-               # [vx, vy, x, y] = cv2.fitLine(c1['contour'], cv2.DIST_L2, 0, 0.01, 0.01)
-               # lefty = int((-x * vy / vx) + y)
-               # righty = int(((cols - x) * vy / vx) + y)
-               # cv2.line(image, (cols - 1, righty), (0, lefty), (100, 100, 100), 2)
-                #cv2.imshow("Image", image)
-                #cv2.waitKey(0)
+    # Find the nodes each link is pointing at
+    for link in graph_links:
+        l_cnt = link['contour']
+        dis = []
+        # get the two farthest points from each other, these are link ends
+        for c1 in l_cnt:
+            for c2 in l_cnt:
+                d = calc_distance(c1[0], c2[0])
+                if d > 0.0:
+                    dis.append({'d': d, 'p1': c1, 'p2': c2})
+
+        dis = sorted(dis, key=lambda z: z['d'])
+
+        # extreme ends of link
+        p1 = dis[len(dis)-1]['p1']
+        p2 = dis[len(dis) - 1]['p2']
+
+        p1_dis = []
+        p2_dis = []
+
+        # get the closest node to each end of the link
+        for n in graph_nodes:
+            n_cnt = n['contour']
+
+            M = cv2.moments(n_cnt)
+            nx = int(M['m10'] / M['m00'])
+            ny = int(M['m01'] / M['m00'])
+
+            # calc distance from each end
+            p1d = calc_distance((nx, ny), p1[0])
+            p2d = calc_distance((nx, ny), p2[0])
+
+            if p1d > 0.0:
+                p1_dis.append({'d': p1d, 'n': n})
+
+            if p2d > 0.0:
+                p2_dis.append({'d': p2d, 'n': n})
+
+        # sort and get closest nodes to each end
+        p1_dis = sorted(p1_dis, key=lambda z: z['d'])
+        p2_dis = sorted(p2_dis, key=lambda z: z['d'])
+
+        na = p1_dis[0]['n']
+        nb = p2_dis[0]['n']
+
+        # save node indices if not the same
+        if na['index'] is not nb['index']:
+            link['na_index'] = na['index']
+            link['nb_index'] = nb['index']
 
     nodes_info = []
-
     for node in graph_nodes:
         for parent_child_hash in parent_child_list:
 
@@ -122,4 +173,4 @@ if __name__ == '__main__':
     img_dir = 'images/graphs/name-graph.png'
 
     nodes, links = process_graph(img_dir)
-    print('nodes:', str(len(nodes)), ' links:', str(len(links)))
+    #print('nodes:', str(len(nodes)), ' links:', str(len(links)))
