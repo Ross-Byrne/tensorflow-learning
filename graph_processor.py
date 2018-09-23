@@ -9,19 +9,14 @@ def calc_distance(p1, p2):
     dx = x1 - x2
     dy = y1 - y2
     d = np.sqrt(dx * dx + dy * dy)
-
     return d
 
 
 def process_graph(image_dir):
 
     img = cv2.imread(image_dir)
-
     dim = (1000, 500)
     img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
-
-    #cv2.imshow("Image", img)
-    #cv2.waitKey(0)
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -87,7 +82,6 @@ def process_graph(image_dir):
         if c1 not in invalid:
             valid_cons.append(c1)
             hull = cv2.convexHull(c1['contour'], False)
-            #cv2.drawContours(image, [hull], 0, (155, 155, 155), 2, 8)
             area = cv2.contourArea(hull)
             perimeter = cv2.arcLength(hull, True)
             circularity = (perimeter * perimeter) / (4 * np.pi * area)
@@ -143,20 +137,20 @@ def process_graph(image_dir):
         p1_dis = sorted(p1_dis, key=lambda z: z['d'])
         p2_dis = sorted(p2_dis, key=lambda z: z['d'])
 
-        na = p1_dis[0]['n']
-        nb = p2_dis[0]['n']
+        n1 = p1_dis[0]['n']
+        n2 = p2_dis[0]['n']
 
         # save node indices if not the same
-        if na['index'] is not nb['index']:
-            link['na_index'] = na['index']
-            link['nb_index'] = nb['index']
+        if n1['index'] is not n2['index']:
+            link['n1_index'] = n1['index']
+            link['n2_index'] = n2['index']
 
     nodes_info = []
     for node in graph_nodes:
         for parent_child_hash in parent_child_list:
 
             if parent_child_hash['parent'] is node:
-                nodes_info.append({'node': node, 'nested_contours': parent_child_hash['children']})
+                nodes_info.append({'node': node, 'index': node['index'], 'nested_contours': parent_child_hash['children']})
 
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
@@ -173,4 +167,4 @@ if __name__ == '__main__':
     img_dir = 'images/graphs/name-graph.png'
 
     nodes, links = process_graph(img_dir)
-    #print('nodes:', str(len(nodes)), ' links:', str(len(links)))
+    # print('nodes:', str(len(nodes)), ' links:', str(len(links)))

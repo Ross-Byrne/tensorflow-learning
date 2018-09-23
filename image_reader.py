@@ -1,28 +1,11 @@
-import os
-import shutil
 import cv2
 import numpy as np
 import graph_processor
 
-# directory for temp images
-temp_dir = 'temp_images/'
 
-
-# Takes path to image and reads characters in it
-# Returns array of image paths, one for each character
 def read_image(image_dir, graph_node):
 
-    # create directory for temp images
-    dir = os.path.dirname(os.path.realpath(__file__)) + '/' + temp_dir
-    if not os.path.exists(dir):
-        print('Creating temp directory...')
-        os.makedirs(dir)
-    else:
-        shutil.rmtree(dir)  # Clean up
-        os.makedirs(dir)  # make directory again
-
     im = cv2.imread(image_dir)
-
     dim = (1000, 500)
     im = cv2.resize(im, dim, interpolation=cv2.INTER_AREA)
 
@@ -30,23 +13,9 @@ def read_image(image_dir, graph_node):
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
-   # cv2.imshow('norm', thresh)
-   # cv2.waitKey(0)
-
-    #thresh = im
-
-    # Should try this
-    #ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-
-    # Now finding Contours
-   # image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-
     candidates = []
     invalid = []
     valid_chars = []
-    nested_contours = []
-    node = None
-    parent_area = None
 
     if graph_node is not None:
         node = graph_node['node']
@@ -105,7 +74,6 @@ def read_image(image_dir, graph_node):
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
     imgs = []
-    #print("Valid:", len(valid_chars))
 
     if len(valid_chars) > 0:
 
@@ -121,9 +89,6 @@ def read_image(image_dir, graph_node):
         min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
 
         # draw bounding boxes around valid characters
-        i = 0
-        #image_dirs = []
-
         for con in valid_chars:
             x = con['x']
             y = con['y']
@@ -158,23 +123,14 @@ def read_image(image_dir, graph_node):
             img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
                                      borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
 
-            #file_path = temp_dir + 'img_' + str(i) + '.png'
-            #cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
-
             # Add None to indicate a space
             if con['distance_from_last'] > min_space_size:
-               # image_dirs.append(None)
                 imgs.append(None)
 
-            #image_dirs.append(file_path)
             imgs.append(img)
 
-            #cv2.imshow('norm', img)
-            #cv2.waitKey(0)
-            i += 1
-
-    cv2.imshow('norm', im)
-    cv2.waitKey(0)
+    # cv2.imshow('norm', im)
+    # cv2.waitKey(0)
 
     return imgs
 
