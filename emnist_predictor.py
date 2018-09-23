@@ -53,7 +53,7 @@ def predict(image):
     x = np.invert(x)
 
     # Visualize new array
-    # imsave('resized.png', x)
+    #imsave('resized.png', x)
     x = imresize(x, (image_width, image_height))
 
     # reshape image data for use in neural network
@@ -78,8 +78,9 @@ def predict(image):
 if __name__ == '__main__':
 
     # get image to predict
-    image_dir = 'images/img_h_02.png'
+    image_dir = 'images/img_h_01.png'
+    im = imread(image_dir, mode='L')
 
     # Predict image, getting json as return type
-    prediction = predict(image_dir)
+    prediction = predict(im)
     print(prediction)

@@ -25,11 +25,10 @@ def process_graph(image_dir):
 
     # save list of all contours values
     for cnt in contours:
-        if cv2.contourArea(cnt) > 25:
+        if cv2.contourArea(cnt) > 45:
             [x, y, w, h] = cv2.boundingRect(cnt)
             if h > 10 & w < 25:
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'contour': cnt})
-                # cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 255), 2)
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -76,7 +75,6 @@ def process_graph(image_dir):
             area = cv2.contourArea(hull)
             perimeter = cv2.arcLength(hull, True)
             circularity = (perimeter * perimeter) / (4 * np.pi * area)
-            #print(circularity)
 
             if circularity <= 1.7:
                 # graph_nodes.append({'item': c1, 'hull': hull})

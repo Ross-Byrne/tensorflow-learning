@@ -26,8 +26,8 @@ def read_image(image_dir, graph_node):
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
     thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
-    cv2.imshow('norm', thresh)
-    cv2.waitKey(0)
+   # cv2.imshow('norm', thresh)
+   # cv2.waitKey(0)
 
     #thresh = im
 
@@ -40,18 +40,30 @@ def read_image(image_dir, graph_node):
     candidates = []
     invalid = []
     valid_chars = []
-    node = graph_node['node']
-    nested_contours = graph_node['nested_contours']
-    parent_area = cv2.contourArea(node['contour'])
-    print("Parent:", str(parent_area))
+    nested_contours = []
+    node = None
+    parent_area = None
 
-    for con in nested_contours:
-        child_area = cv2.contourArea(con['contour'])
-        print("Child:", str(child_area))
+    if graph_node is not None:
+        node = graph_node['node']
+        nested_contours = graph_node['nested_contours']
+        parent_area = cv2.contourArea(node['contour'])
+        print("Parent:", str(parent_area))
 
-        # keep contour if area is at least 20% smaller then parent area
-        if child_area < (parent_area * 0.8):
-            candidates.append(con)
+        for con in nested_contours:
+            child_area = cv2.contourArea(con['contour'])
+            print("Child:", str(child_area))
+
+            # keep contour if area is at least 20% smaller then parent area
+            if child_area < (parent_area * 0.8):
+                candidates.append(con)
+    else:
+        image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        for cnt in contours:
+            if cv2.contourArea(cnt) > 45:
+                [x, y, w, h] = cv2.boundingRect(cnt)
+                if h > 10 & w < 25:
+                    candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -90,73 +102,74 @@ def read_image(image_dir, graph_node):
 
     # order characters in correct order, from left to right
     valid_chars = sorted(valid_chars, key=lambda x_coords: x_coords['x'])
-
+    imgs = []
     print("Valid:", len(valid_chars))
 
-    # calculate median distance between characters to guess where spaces are
-    spaces = []
-    valid_chars[0]['distance_from_last'] = 0
-    for x in range(1, len(valid_chars)):
-        distance = valid_chars[x]['x'] - (valid_chars[x - 1]['x'] + valid_chars[x - 1]['w'])
-        spaces.append(distance)
-        valid_chars[x]['distance_from_last'] = distance
+    if len(valid_chars) > 0:
 
-    median_space = np.median(spaces)
-    min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
+        # calculate median distance between characters to guess where spaces are
+        spaces = []
+        valid_chars[0]['distance_from_last'] = 0
+        for x in range(1, len(valid_chars)):
+            distance = valid_chars[x]['x'] - (valid_chars[x - 1]['x'] + valid_chars[x - 1]['w'])
+            spaces.append(distance)
+            valid_chars[x]['distance_from_last'] = distance
 
-    # draw bounding boxes around valid characters
-    i = 0
-    #image_dirs = []
-    imgs = []
-    for con in valid_chars:
-        x = con['x']
-        y = con['y']
-        h = con['h']
-        w = con['w']
+        median_space = np.median(spaces)
+        min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
 
-        cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        img = thresh[y: y + h, x: x + w]
-        img = cv2.bitwise_not(img)  # invert to get white background and black text
+        # draw bounding boxes around valid characters
+        i = 0
+        #image_dirs = []
 
-        # pad width or height to make image a square and add extra padding to help classification
-        height, width = img.shape[:2]
-        extra_pad = 6
-        half_pad = int(extra_pad / 2)
+        for con in valid_chars:
+            x = con['x']
+            y = con['y']
+            h = con['h']
+            w = con['w']
 
-        if width % 2 != 0:
-            width += 1
+            cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            img = thresh[y: y + h, x: x + w]
+            img = cv2.bitwise_not(img)  # invert to get white background and black text
 
-        if height % 2 != 0:
-            height += 1
+            # pad width or height to make image a square and add extra padding to help classification
+            height, width = img.shape[:2]
+            extra_pad = 6
+            half_pad = int(extra_pad / 2)
 
-        if width < height:
-            border_w = int((height - width + extra_pad) / 2)
-            border_h = half_pad
-        elif width > height:
-            border_h = int((width - height + extra_pad) / 2)
-            border_w = half_pad
-        else:
-            border_h = half_pad
-            border_w = half_pad
+            if width % 2 != 0:
+                width += 1
 
-        img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
-                                 borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
+            if height % 2 != 0:
+                height += 1
 
-        #file_path = temp_dir + 'img_' + str(i) + '.png'
-        #cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
+            if width < height:
+                border_w = int((height - width + extra_pad) / 2)
+                border_h = half_pad
+            elif width > height:
+                border_h = int((width - height + extra_pad) / 2)
+                border_w = half_pad
+            else:
+                border_h = half_pad
+                border_w = half_pad
 
-        # Add None to indicate a space
-        if con['distance_from_last'] > min_space_size:
-           # image_dirs.append(None)
-            imgs.append(None)
+            img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
+                                     borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
 
-        #image_dirs.append(file_path)
-        imgs.append(img)
+            #file_path = temp_dir + 'img_' + str(i) + '.png'
+            #cv2.imwrite(file_path, img)  # save contents of rectangle to image folder
 
+            # Add None to indicate a space
+            if con['distance_from_last'] > min_space_size:
+               # image_dirs.append(None)
+                imgs.append(None)
 
-        #cv2.imshow('norm', img)
-        #cv2.waitKey(0)
-        i += 1
+            #image_dirs.append(file_path)
+            imgs.append(img)
+
+            #cv2.imshow('norm', img)
+            #cv2.waitKey(0)
+            i += 1
 
     cv2.imshow('norm', im)
     cv2.waitKey(0)
