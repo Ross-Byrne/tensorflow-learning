@@ -1,20 +1,16 @@
 # Mute tensorflow debugging information console
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-from keras.layers import Conv2D, MaxPooling2D, Convolution2D, Dropout, Dense, Flatten, LSTM
+import keras
+from keras.layers import Conv2D, MaxPooling2D, Dropout, Dense, Flatten
 from keras.models import Sequential, save_model
 from keras.utils import np_utils
-from scipy.io import loadmat
-import pickle
-import argparse
-import keras
-import numpy as np
-import EmnistData as emnistData  # Load EMNIST Data
+from emnist import Emnist  # Load EMNIST Data
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 print("Testing EMNIST Data import")
-batch_size = 100
-epochs = 100
+batch_size = 256
+epochs = 1
 
 
 def build_net(training_data, width=28, height=28, verbose=False):
@@ -29,10 +25,27 @@ def build_net(training_data, width=28, height=28, verbose=False):
     kernel_size = (3, 3)  # convolution kernel size
 
     model = Sequential()
-    model.add(Conv2D(32, kernel_size, padding='same', activation='relu', input_shape=input_shape))
+    model.add(Conv2D(64, kernel_size, padding='same', activation='relu', input_shape=input_shape))
+    model.add(Conv2D(64, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(64, kernel_size, activation='relu'))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.25))
 
-    # Insert new model here
+    model.add(Conv2D(128, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(128, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(128, kernel_size, activation='relu'))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.25))
 
+    model.add(Conv2D(256, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(256, kernel_size, padding='same', activation='relu'))
+    model.add(Conv2D(256, kernel_size, activation='relu'))
+    model.add(MaxPooling2D(pool_size=pool_size))
+    model.add(Dropout(0.3))
+
+    model.add(Flatten())
+    model.add(Dense(512, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(nb_classes, activation='softmax'))
 
     model.compile(loss='categorical_crossentropy',
@@ -84,6 +97,6 @@ def train(model, training_data, callback=True, batch_size=256, epochs=10):
 
 if __name__ == '__main__':
 
-    training_data = emnistData.load_data()
+    training_data = Emnist.load_data()
     model = build_net(training_data)
-    train(model, training_data, epochs=epochs)
+    train(model, training_data, batch_size=batch_size, epochs=epochs)

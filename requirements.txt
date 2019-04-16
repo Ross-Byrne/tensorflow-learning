@@ -1,0 +1,5 @@
+opencv-python == 4.1.0.25
+scipy
+numpy
+tensorflow == 1.13.1
+keras

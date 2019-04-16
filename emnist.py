@@ -1,6 +1,5 @@
 # Code adapted from the following GitHub repository:
 # https://github.com/Coopss/EMNIST/blob/master/training.py
-# Used strictly for Research and Learning
 import os
 import pickle
 import numpy as np

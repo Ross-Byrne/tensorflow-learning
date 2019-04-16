@@ -1,17 +1,17 @@
-import cv2
+import cv2 as cv
 import numpy as np
 import graph_processor
 
 
 def read_image(image_dir, graph_node):
 
-    im = cv2.imread(image_dir)
+    im = cv.imread(image_dir)
     dim = (1000, 500)
-    im = cv2.resize(im, dim, interpolation=cv2.INTER_AREA)
+    im = cv.resize(im, dim, interpolation=cv.INTER_AREA)
 
-    gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+    gray = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
+    blur = cv.GaussianBlur(gray, (5, 5), 0)
+    thresh = cv.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
     candidates = []
     invalid = []
@@ -20,19 +20,19 @@ def read_image(image_dir, graph_node):
     if graph_node is not None:
         node = graph_node['node']
         nested_contours = graph_node['nested_contours']
-        parent_area = cv2.contourArea(node['contour'])
+        parent_area = cv.contourArea(node['contour'])
 
         for con in nested_contours:
-            child_area = cv2.contourArea(con['contour'])
+            child_area = cv.contourArea(con['contour'])
 
             # keep contour if area is at least 20% smaller then parent area
             if child_area < (parent_area * 0.8):
                 candidates.append(con)
     else:
-        image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
-            if cv2.contourArea(cnt) > 45:
-                [x, y, w, h] = cv2.boundingRect(cnt)
+            if cv.contourArea(cnt) > 45:
+                [x, y, w, h] = cv.boundingRect(cnt)
                 if h > 10 & w < 25:
                     candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
 
@@ -95,9 +95,9 @@ def read_image(image_dir, graph_node):
             h = con['h']
             w = con['w']
 
-            cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
             img = thresh[y: y + h, x: x + w]
-            img = cv2.bitwise_not(img)  # invert to get white background and black text
+            img = cv.bitwise_not(img)  # invert to get white background and black text
 
             # pad width or height to make image a square and add extra padding to help classification
             height, width = img.shape[:2]
@@ -120,8 +120,8 @@ def read_image(image_dir, graph_node):
                 border_h = half_pad
                 border_w = half_pad
 
-            img = cv2.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
-                                     borderType=cv2.BORDER_CONSTANT, value=[255, 255, 255])
+            img = cv.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
+                                     borderType=cv.BORDER_CONSTANT, value=[255, 255, 255])
 
             # Add None to indicate a space
             if con['distance_from_last'] > min_space_size:
@@ -129,8 +129,8 @@ def read_image(image_dir, graph_node):
 
             imgs.append(img)
 
-    # cv2.imshow('norm', im)
-    # cv2.waitKey(0)
+    # cv.imshow('norm', im)
+    # cv.waitKey(0)
 
     return imgs
 

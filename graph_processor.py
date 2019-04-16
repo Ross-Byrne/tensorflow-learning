@@ -1,4 +1,4 @@
-import cv2
+import cv2 as cv
 import numpy as np
 
 
@@ -14,19 +14,20 @@ def calc_distance(p1, p2):
 
 def process_graph(image_dir):
 
-    img = cv2.imread(image_dir)
+    img = cv.imread(image_dir)
     dim = (1000, 500)
-    img = cv2.resize(img, dim, interpolation=cv2.INTER_AREA)
+    img = cv.resize(img, dim, interpolation=cv.INTER_AREA)
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    thresh = cv2.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    blur = cv.GaussianBlur(gray, (5, 5), 0)
+    thresh = cv.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
     # Finding Contours
-    image, contours, hierarchy = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 
-    cv2.imshow("Image", image)
-    cv2.waitKey(0)
+    image = cv.drawContours(img, contours, -1, (0, 255, 0), 3)
+    cv.imshow("Image", image)
+    cv.waitKey(0)
 
     candidates = []
     invalid = []
@@ -35,8 +36,8 @@ def process_graph(image_dir):
 
     # save list of all contours values
     for cnt in contours:
-        if cv2.contourArea(cnt) > 45:
-            [x, y, w, h] = cv2.boundingRect(cnt)
+        if cv.contourArea(cnt) > 45:
+            [x, y, w, h] = cv.boundingRect(cnt)
             if h > 10 & w < 25:
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'contour': cnt})
 
@@ -81,9 +82,9 @@ def process_graph(image_dir):
     for c1 in candidates:
         if c1 not in invalid:
             valid_cons.append(c1)
-            hull = cv2.convexHull(c1['contour'], False)
-            area = cv2.contourArea(hull)
-            perimeter = cv2.arcLength(hull, True)
+            hull = cv.convexHull(c1['contour'], False)
+            area = cv.contourArea(hull)
+            perimeter = cv.arcLength(hull, True)
             circularity = (perimeter * perimeter) / (4 * np.pi * area)
 
             if circularity <= 1.7:
@@ -119,7 +120,7 @@ def process_graph(image_dir):
         for n in graph_nodes:
             n_cnt = n['contour']
 
-            M = cv2.moments(n_cnt)
+            M = cv.moments(n_cnt)
             nx = int(M['m10'] / M['m00'])
             ny = int(M['m01'] / M['m00'])
 
@@ -152,8 +153,8 @@ def process_graph(image_dir):
             if parent_child_hash['parent'] is node:
                 nodes_info.append({'node': node, 'index': node['index'], 'nested_contours': parent_child_hash['children']})
 
-    # cv2.imshow("Image", image)
-    # cv2.waitKey(0)
+    # cv.imshow("Image", image)
+    # cv.waitKey(0)
     print('nodes:', str(len(nodes_info)), ' links:', str(len(graph_links)))
 
     return nodes_info, graph_links

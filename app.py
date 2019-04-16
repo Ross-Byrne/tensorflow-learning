@@ -1,4 +1,3 @@
-import cv2
 import image_reader
 import emnist_predictor
 import graph_processor
@@ -59,4 +58,3 @@ if __name__ == '__main__':
 
         print(n1['text'], "<-->", n2['text'])
 
-    cv2.waitKey(0)
