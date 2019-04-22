@@ -95,9 +95,8 @@ def read_image(image_dir, graph_node):
             h = con['h']
             w = con['w']
 
-            cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
             img = thresh[y: y + h, x: x + w]
-            img = cv.bitwise_not(img)  # invert to get white background and black text
 
             # pad width or height to make image a square and add extra padding to help classification
             height, width = img.shape[:2]
@@ -121,7 +120,7 @@ def read_image(image_dir, graph_node):
                 border_w = half_pad
 
             img = cv.copyMakeBorder(img, top=border_h, bottom=border_h, left=border_w, right=border_w,
-                                     borderType=cv.BORDER_CONSTANT, value=[255, 255, 255])
+                                     borderType=cv.BORDER_CONSTANT, value=[0, 0, 0])
 
             # Add None to indicate a space
             if con['distance_from_last'] > min_space_size:

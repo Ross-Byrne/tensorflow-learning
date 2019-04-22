@@ -25,7 +25,7 @@ def process_graph(image_dir):
     # Finding Contours
     contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 
-    image = cv.drawContours(img, contours, -1, (0, 255, 0), 3)
+    image = cv.drawContours(img, contours, -1, (0, 255, 0), 2)
     cv.imshow("Image", image)
     cv.waitKey(0)
 

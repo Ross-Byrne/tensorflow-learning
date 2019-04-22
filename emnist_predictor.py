@@ -1,7 +1,7 @@
 # Code adapted from the following GitHub repository:
 # https://github.com/Coopss/EMNIST/blob/master/server.py
 import os
-from scipy.misc import imsave, imread, imresize
+import cv2 as cv
 from keras.models import model_from_yaml
 import numpy as np
 import pickle
@@ -39,6 +39,7 @@ def load_mapping(bin_dir='bin/'):
 
 # Takes the model, label mapping and directory of image to predict
 # Returns the prediction and confidence
+# Character images must have white characters and black backgrounds
 def predict(image):
 
     # Load trained model and weights from file
@@ -47,14 +48,8 @@ def predict(image):
     # load label mappings
     mapping = load_mapping()
 
-    # read parsed image back in 8-bit, black and white mode (L)
-    #x = imread(image_dir, mode='L')
-    x = image
-    x = np.invert(x)
-
-    # Visualize new array
-    #imsave('resized.png', x)
-    x = imresize(x, (image_width, image_height))
+    # Resize image
+    x = cv.resize(image, (image_width, image_height), interpolation=cv.INTER_AREA)
 
     # reshape image data for use in neural network
     x = x.reshape(1, image_width, image_height, 1)
@@ -79,7 +74,11 @@ if __name__ == '__main__':
 
     # get image to predict
     image_dir = 'images/img_h_01.png'
-    im = imread(image_dir, mode='L')
+    im = cv.imread(image_dir)
+    im = cv.cvtColor(im, cv.COLOR_BGR2GRAY)  # convert image to black and white
+    im = np.invert(im)  # convert to black background and white text
+    # cv.imshow("Image", im)
+    # cv.waitKey(0)
 
     # Predict image, getting json as return type
     prediction = predict(im)
