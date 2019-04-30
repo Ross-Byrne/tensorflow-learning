@@ -22,12 +22,17 @@ def process_graph(image_dir):
     blur = cv.GaussianBlur(gray, (5, 5), 0)
     thresh = cv.adaptiveThreshold(blur, 255, 1, 1, 11, 2)
 
+    # cv.imshow("img", img)
+    # cv.imshow("gray", gray)
+    # cv.imshow("blur", blur)
+    # cv.imshow("thresh", thresh)
+
     # Finding Contours
     contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
 
-    image = cv.drawContours(img, contours, -1, (0, 255, 0), 2)
-    cv.imshow("Image", image)
-    cv.waitKey(0)
+    # image = cv.drawContours(img, contours, -1, (0, 255, 0), 2)
+    # cv.imshow("Image", image)
+    # cv.waitKey(0)
 
     candidates = []
     invalid = []
@@ -36,10 +41,13 @@ def process_graph(image_dir):
 
     # save list of all contours values
     for cnt in contours:
-        if cv.contourArea(cnt) > 45:
+        if cv.contourArea(cnt) > 40:
             [x, y, w, h] = cv.boundingRect(cnt)
-            if h > 10 & w < 25:
-                candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'contour': cnt})
+            # filtered = cv.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
+            candidates.append({'x': x, 'y': y, 'w': w, 'h': h, 'contour': cnt})
+
+    # cv.imshow("filtered", filtered)
+    # cv.waitKey(0)
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -78,6 +86,7 @@ def process_graph(image_dir):
     graph_links = []
     graph_nodes = []
     n_index = 0
+
     # save contours that are valid
     for c1 in candidates:
         if c1 not in invalid:
@@ -85,9 +94,9 @@ def process_graph(image_dir):
             hull = cv.convexHull(c1['contour'], False)
             area = cv.contourArea(hull)
             perimeter = cv.arcLength(hull, True)
-            circularity = (perimeter * perimeter) / (4 * np.pi * area)
+            circularity = (4 * np.pi * area) / (perimeter * perimeter)
 
-            if circularity <= 1.7:
+            if circularity >= 0.7:
                 c1['index'] = n_index
                 graph_nodes.append(c1)
                 n_index = n_index + 1
