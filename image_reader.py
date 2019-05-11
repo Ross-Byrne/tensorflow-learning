@@ -6,7 +6,11 @@ import graph_processor
 def read_image(image_dir, graph_node):
 
     im = cv.imread(image_dir)
-    dim = (1000, 500)
+
+    (h, w) = im.shape[:2]
+    r = 900 / float(w)
+    dim = (900, int(h * r))
+    # dim = (1000, 500)
     im = cv.resize(im, dim, interpolation=cv.INTER_AREA)
 
     gray = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
@@ -27,14 +31,15 @@ def read_image(image_dir, graph_node):
 
             # keep contour if area is at least 20% smaller then parent area
             if child_area < (parent_area * 0.8):
-                candidates.append(con)
+                [x, y, w, h] = cv.boundingRect(con['contour'])
+                im = cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
+                candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
     else:
         contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
-            if cv.contourArea(cnt) > 45:
+            if cv.contourArea(cnt) > 40:
                 [x, y, w, h] = cv.boundingRect(cnt)
-                if h > 10 & w < 25:
-                    candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
+                candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
 
     # get list of contours found inside other contours
     # these are invalid and cannot be used
@@ -85,8 +90,11 @@ def read_image(image_dir, graph_node):
             spaces.append(distance)
             valid_chars[x]['distance_from_last'] = distance
 
-        median_space = np.median(spaces)
-        min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
+        if len(spaces) > 1:
+            median_space = np.median(spaces)
+            min_space_size = median_space + (median_space * 1.6)  # guess what the smallest space width is
+        else:
+            min_space_size = 0
 
         # draw bounding boxes around valid characters
         for con in valid_chars:
@@ -136,9 +144,11 @@ def read_image(image_dir, graph_node):
 
 if __name__ == '__main__':
     img_dir = 'images/graphs/name-graph.png'
+    node_dir = 'images/bench_01.png'
 
     nodes, links = graph_processor.process_graph(img_dir)
     print('nodes:', str(len(nodes)), ' links:', str(len(links)))
 
     characters = read_image(img_dir, nodes[4])
+    # characters = read_image(node_dir, None)
     print("Characters:", str(len(characters)))

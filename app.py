@@ -5,60 +5,70 @@ import graph_processor
 
 if __name__ == '__main__':
 
-    graph_image_dir = 'images/graphs/name-graph.png'
+    # graph_image_dir = 'images/graphs/name-graph.png'
     # graph_image_dir = 'images/bench_04.png'
+    graph_image_dir = 'images/graphs/g-25.png'
 
     graph_nodes, graph_links = graph_processor.process_graph(graph_image_dir)
 
     nodes = []
     links = []
 
-    # build link structure
-    for l in graph_links:
-        links.append({'source': l['n1_index'], 'target': l['n2_index']})
+    # nodes found
+    if len(graph_nodes):
 
-    # get text from nodes
-    for node in graph_nodes:
+        # build link structure
+        for l in graph_links:
+            if 'n1_index' in l and 'n2_index' in l:
+                links.append({'source': l['n1_index'], 'target': l['n2_index']})
 
-        # read characters from image
-        characters = image_reader.read_image(graph_image_dir, node)
+        # get text from nodes
+        for node in graph_nodes:
 
-        if len(characters) > 0:
-            print('Classifying text for Node:', str(node['index'] + 1), "/", str(len(graph_nodes)), ". . .")
+            # read characters from image
+            characters = image_reader.read_image(graph_image_dir, node)
 
-            text = ''
-            # predict each character
-            for char in characters:
+            if len(characters) > 0:
+                print('Classifying text for Node:', str(node['index'] + 1), "/", str(len(graph_nodes)), ". . .")
 
-                if char is not None:
-                    # Predict image, getting json as return type
-                    prediction = emnist_predictor.predict(char)
-                    text += prediction['prediction']
-                    # print(prediction)
-                else:
-                    text += ' '
-                    # print('')
-            # print(node)
-            nodes.append({'index': node['index'], 'text': text})
+                text = ''
+                # predict each character
+                for char in characters:
 
-    # build json representation of graph
-    graph_json = {'nodes': nodes, 'links': links}
+                    if char is not None:
+                        # Predict image, getting json as return type
+                        prediction = emnist_predictor.predict(char)
+                        text += prediction['prediction']
+                        # print(prediction)
+                    else:
+                        text += ' '
+                        # print('')
+                # print(node)
+                nodes.append({'index': node['index'], 'text': text})
+            else:
+                nodes.append({'index': node['index'], 'text': ''})
 
-    print('Nodes:', nodes)
-    print('Links:', links)
-    print('Graph JSON:', graph_json)
+        # build json representation of graph
+        graph_json = {'nodes': nodes, 'links': links}
 
-    # print out connected nodes
-    for l in graph_json['links']:
-        n1 = None
-        n2 = None
+        print('Nodes:', nodes)
+        print('Links:', links)
+        print('Graph JSON:', graph_json)
 
-        for n in graph_json['nodes']:
-            if n['index'] is l['source']:
-                n1 = n
+        # print out connected nodes
+        for l in graph_json['links']:
+            n1 = None
+            n2 = None
 
-            if n['index'] is l['target']:
-                n2 = n
+            for n in graph_json['nodes']:
+                if n['index'] is l['source']:
+                    n1 = n
 
-        print(n1['text'], "<-->", n2['text'])
+                if n['index'] is l['target']:
+                    n2 = n
 
+            if n1 is not None and n2 is not None:
+                print(n1['text'] or n1['index'], "<-->", n2['text'] or n2['index'])
+
+    else:
+        print("No graph nodes detected...")
