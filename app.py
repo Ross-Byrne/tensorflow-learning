@@ -5,9 +5,9 @@ import graph_processor
 
 if __name__ == '__main__':
 
-    # graph_image_dir = 'images/graphs/name-graph.png'
+    graph_image_dir = 'images/graphs/name-graph.png'
     # graph_image_dir = 'images/bench_04.png'
-    graph_image_dir = 'images/graphs/g-25.png'
+    # graph_image_dir = 'images/graphs/g-28.png'
 
     graph_nodes, graph_links = graph_processor.process_graph(graph_image_dir)
 

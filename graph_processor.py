@@ -28,7 +28,7 @@ def process_graph(image_dir):
     # cv.imshow("img", img)
     # cv.imshow("gray", gray)
     # cv.imshow("blur", blur)
-    cv.imshow("thresh", thresh)
+    # cv.imshow("thresh", thresh)
 
     # Finding Contours
     contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
@@ -100,7 +100,7 @@ def process_graph(image_dir):
         perimeter = cv.arcLength(cnt['contour'], True)
         circularity = (4 * np.pi * area) / (perimeter * perimeter)
 
-        if circularity >= 0.7:
+        if circularity >= 0.5:
             cnt['index'] = n_index
             graph_nodes.append(cnt)
             n_index = n_index + 1
@@ -153,10 +153,9 @@ def process_graph(image_dir):
             n1 = p1_dis[0]['n']
             n2 = p2_dis[0]['n']
 
-            # save node indices if not the same
-            if n1['index'] is not n2['index']:
-                link['n1_index'] = n1['index']
-                link['n2_index'] = n2['index']
+            # save node indices
+            link['n1_index'] = n1['index']
+            link['n2_index'] = n2['index']
 
     nodes_info = []
     for node in graph_nodes:
