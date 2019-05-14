@@ -32,13 +32,14 @@ def read_image(image_dir, graph_node):
             # keep contour if area is at least 20% smaller then parent area
             if child_area < (parent_area * 0.8):
                 [x, y, w, h] = cv.boundingRect(con['contour'])
-                im = cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
+                # im = cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
     else:
         contours, hierarchy = cv.findContours(thresh, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
         for cnt in contours:
             if cv.contourArea(cnt) > 40:
                 [x, y, w, h] = cv.boundingRect(cnt)
+                # im = cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
                 candidates.append({'x': x, 'y': y, 'w': w, 'h': h})
 
     # get list of contours found inside other contours
@@ -103,7 +104,7 @@ def read_image(image_dir, graph_node):
             h = con['h']
             w = con['w']
 
-            cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
+            # cv.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
             img = thresh[y: y + h, x: x + w]
 
             # pad width or height to make image a square and add extra padding to help classification

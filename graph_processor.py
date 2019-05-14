@@ -33,9 +33,9 @@ def process_graph(image_dir):
     # Finding Contours
     contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
-    image = cv.drawContours(img, contours, -1, (0, 255, 0), 2)
-    cv.imshow("Image", image)
-    cv.waitKey(0)
+    # image = cv.drawContours(img, contours, -1, (0, 0, 255), 2)
+    # cv.imshow("Image", image)
+    # cv.waitKey(0)
 
     parent_child_list = []
     child_hash = {}
@@ -79,12 +79,11 @@ def process_graph(image_dir):
             candidate['children'] = all_kids
             candidates.append(candidate)
 
-    # # draw parent contour rectangles
+    # # draw detected parent contours
     # for cnt in parent_child_list:
     #     if cnt['parent'] not in invalid:
     #         c = cnt['parent']
-    #         [x, y, w, h] = cv.boundingRect(c['contour'])
-    #         filtered = cv.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)  # This is for demonstration
+    #         filtered = cv.drawContours(img, [c['contour']], -1, (0, 0, 255), 2)
     #
     # cv.imshow("filtered", filtered)
     # cv.waitKey(0)
@@ -104,8 +103,13 @@ def process_graph(image_dir):
             cnt['index'] = n_index
             graph_nodes.append(cnt)
             n_index = n_index + 1
+            # cv.drawContours(img, [cnt['contour']], -1, (0, 0, 255), 2)
         else:
+            # cv.drawContours(img, [cnt['contour']], -1, (0, 255, 0), 2)
             graph_links.append(cnt)  # list as connection, not node
+
+    # cv.imshow("Image", img)
+    # cv.waitKey(0)
 
     # Find the nodes each link is pointing at, if there are any nodes
     if len(graph_nodes) > 1:
@@ -176,8 +180,8 @@ if __name__ == '__main__':
     # img_dir = 'images/graphs/graph_test.png'
     # img_dir = 'images/graphs/graph_test_2.png'
     # img_dir = 'images/graphs/graph_test_3.png'
-    # img_dir = 'images/graphs/name-graph.png'
-    img_dir = 'images/graphs/g-13.png'
+    img_dir = 'images/graphs/name-graph.png'
+    # img_dir = 'images/graphs/g-13.png'
 
     nodes, links = process_graph(img_dir)
     # print('nodes:', str(len(nodes)), ' links:', str(len(links)))

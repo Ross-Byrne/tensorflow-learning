@@ -20,7 +20,7 @@ if __name__ == '__main__':
         # build link structure
         for l in graph_links:
             if 'n1_index' in l and 'n2_index' in l:
-                links.append({'source': l['n1_index'], 'target': l['n2_index']})
+                links.append({"source": l['n1_index'], "target": l['n2_index']})
 
         # get text from nodes
         for node in graph_nodes:
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             if len(characters) > 0:
                 print('Classifying text for Node:', str(node['index'] + 1), "/", str(len(graph_nodes)), ". . .")
 
-                text = ''
+                text = ""
                 # predict each character
                 for char in characters:
 
@@ -41,15 +41,15 @@ if __name__ == '__main__':
                         text += prediction['prediction']
                         # print(prediction)
                     else:
-                        text += ' '
+                        text += " "
                         # print('')
                 # print(node)
-                nodes.append({'index': node['index'], 'text': text})
+                nodes.append({"index": node['index'], "text": text})
             else:
-                nodes.append({'index': node['index'], 'text': ''})
+                nodes.append({"index": node['index'], "text": ''})
 
         # build json representation of graph
-        graph_json = {'nodes': nodes, 'links': links}
+        graph_json = {"nodes": nodes, "links": links}
 
         print('Nodes:', nodes)
         print('Links:', links)
