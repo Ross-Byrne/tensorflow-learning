@@ -176,7 +176,6 @@ def process_graph(image_dir):
 
 
 if __name__ == '__main__':
-    # img_dir = "images/graphs/circle_test.png"
     # img_dir = 'images/graphs/graph_test.png'
     # img_dir = 'images/graphs/graph_test_2.png'
     # img_dir = 'images/graphs/graph_test_3.png'

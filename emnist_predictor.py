@@ -73,7 +73,7 @@ def predict(image):
 if __name__ == '__main__':
 
     # get image to predict
-    image_dir = 'images/img_h_01.png'
+    image_dir = 'images/text/img_h_01.png'
     im = cv.imread(image_dir)
     im = cv.cvtColor(im, cv.COLOR_BGR2GRAY)  # convert image to black and white
     im = np.invert(im)  # convert to black background and white text
