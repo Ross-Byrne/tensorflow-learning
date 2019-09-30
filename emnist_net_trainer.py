@@ -8,7 +8,6 @@ from emnist import Emnist  # Load EMNIST Data
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-print("Testing EMNIST Data import")
 batch_size = 256
 epochs = 1
 
